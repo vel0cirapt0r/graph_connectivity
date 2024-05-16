@@ -10,25 +10,31 @@ class GraphConnectivityChecker:
     def __init__(self, graph):
         self.graph = graph
 
-    @measure_time
-    def dfs(self, node, visited):
+    def dfs(self, node, visited, component):
         visited[node] = True
+        component.append(node)
         for neighbor in self.graph[node]:
             if not visited[neighbor]:
-                self.dfs(neighbor, visited)
+                self.dfs(neighbor, visited, component)
 
+    @measure_time
+    def find_connected_components(self):
+        visited = {node: False for node in self.graph}
+        connected_components = []
+        for node in self.graph:
+            if not visited[node]:
+                component = []
+                self.dfs(node, visited, component)
+                connected_components.append(component)
+        return connected_components
+
+    @measure_time
     def is_connected(self):
         if not self.graph:
             return True
-
-        # Initialize visited flags
         visited = {node: False for node in self.graph}
-
-        # Perform DFS from an arbitrary node
         start_node = next(iter(self.graph))
-        self.dfs(start_node, visited)
-
-        # Check if all nodes were visited
+        self.dfs(start_node, visited, [])
         return all(visited.values())
 
 
@@ -38,13 +44,14 @@ if __name__ == '__main__':
     # folder_path = os.path.join(dataset_folder_path, files_path)
     #
     # parser = GraphParser()
-    # graph = parser.parse(folder_path)
+    # parsed_graph = parser.parse(folder_path)
+    # graph = parsed_graph['distance_edges']
     #
-    # total_edges = sum(len(adjacent_vertices) for adjacent_vertices in graph['distance_edges'].values())
-    # print('number of nodes: ', len(graph['distance_edges']), ', number of edges: ', total_edges)
+    # total_edges = sum(len(adjacent_vertices) for adjacent_vertices in graph.values())
+    # print('number of nodes: ', len(graph), ', number of edges: ', total_edges)
     # print(graph['distance_edges'])
 
-    graph = generate_graph(20, 15)
+    graph = generate_graph(20, 95)
     print("generated graph: ", graph)
 
     connectivity_checker = GraphConnectivityChecker(graph)
@@ -53,3 +60,7 @@ if __name__ == '__main__':
         print("The graph is connected.")
     else:
         print("The graph is not connected.")
+        connected_components = connectivity_checker.find_connected_components()
+        print("Connected components:")
+        for i, component in enumerate(connected_components, start=1):
+            print(f"Component {i}: {component}")
