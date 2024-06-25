@@ -56,8 +56,8 @@ class GraphParser:
             for line in f:
                 if line.startswith('a'):
                     parts = line.split()
-                    node_u = parts[1]
-                    node_v = parts[2]
+                    node_u = int(parts[1])
+                    node_v = int(parts[2])
                     weight = int(parts[3])
                     if node_u not in graph:
                         graph[node_u] = {}
