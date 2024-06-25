@@ -42,29 +42,65 @@ class GraphConnectivityChecker:
         return all(visited.values())
 
 
+# if __name__ == '__main__':
+#     dataset_folder_path = input('Enter path to graph files folder: ') or DATASET_PATH
+#     files_path = input('Enter name of graph files: ') or 'bay'
+#     folder_path = os.path.join(dataset_folder_path, files_path)
+#
+#     parser = GraphParser()
+#     parsed_graph = parser.parse(folder_path)
+#     graph = parsed_graph['distance_edges']
+#
+#     total_edges = sum(len(adjacent_vertices) for adjacent_vertices in graph.values())
+#     print('number of nodes: ', len(graph), ', number of edges: ', total_edges)
+#     # print(graph)
+#
+#     # graph = generate_graph(20, 95)
+#     # print("generated graph: ", graph)
+#
+#     connectivity_checker = GraphConnectivityChecker(graph)
+#     connected = connectivity_checker.is_connected()
+#     if connected:
+#         print("The graph is connected.")
+#     else:
+#         print("The graph is not connected.")
+#         connected_components = connectivity_checker.find_connected_components()
+#         print("Connected components:")
+#         for i, component in enumerate(connected_components, start=1):
+#             print(f"Component {i}: {component}")
+
 if __name__ == '__main__':
-    dataset_folder_path = input('Enter path to graph files folder: ') or DATASET_PATH
-    files_path = input('Enter name of graph files: ') or 'bay'
-    folder_path = os.path.join(dataset_folder_path, files_path)
+    choice = input('Enter your choice:\n1. Create a new graph\n2. Use a prepared graph\nChoice: ')
 
-    parser = GraphParser()
-    parsed_graph = parser.parse(folder_path)
-    graph = parsed_graph['distance_edges']
+    if choice == '1':
+        num_nodes = int(input('Enter the number of nodes for the new graph: '))
+        num_edges = int(input('Enter the number of edges for the new graph: '))
+        graph = generate_graph(num_nodes, num_edges)
+        print(f"Generated graph with {num_nodes} nodes and {num_edges} edges.")
 
-    total_edges = sum(len(adjacent_vertices) for adjacent_vertices in graph.values())
-    print('number of nodes: ', len(graph), ', number of edges: ', total_edges)
-    # print(graph)
+    elif choice == '2':
+        dataset_folder_path = input('Enter path to the graph files folder: ') or DATASET_PATH
+        files_path = input('Enter name of graph files: ') or 'bay'
+        folder_path = os.path.join(dataset_folder_path, files_path)
 
-    # graph = generate_graph(20, 95)
-    # print("generated graph: ", graph)
+        parser = GraphParser()
+        parsed_graph = parser.parse(folder_path)
+        graph = parsed_graph['distance_edges']
 
-    connectivity_checker = GraphConnectivityChecker(graph)
-    connected = connectivity_checker.is_connected()
-    if connected:
-        print("The graph is connected.")
+        total_edges = sum(len(adjacent_vertices) for adjacent_vertices in graph.values())
+        print(f'Loaded graph with {len(graph)} nodes and {total_edges} edges from {folder_path}.')
+
     else:
-        print("The graph is not connected.")
-        connected_components = connectivity_checker.find_connected_components()
-        print("Connected components:")
-        for i, component in enumerate(connected_components, start=1):
-            print(f"Component {i}: {component}")
+        print('Invalid choice. Please enter 1 or 2.')
+
+    if choice in ['1', '2']:
+        connectivity_checker = GraphConnectivityChecker(graph)
+        connected = connectivity_checker.is_connected()
+        if connected:
+            print("The graph is connected.")
+        else:
+            print("The graph is not connected.")
+            connected_components = connectivity_checker.find_connected_components()
+            print("Connected components:")
+            for i, component in enumerate(connected_components, start=1):
+                print(f"Component {i}: {component}")
